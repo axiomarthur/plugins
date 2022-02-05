@@ -168,6 +168,7 @@ NSString *const errorMethod = @"error";
              [_captureDevice setActiveVideoMaxFrameDuration:CMTimeMake(10,300)];
              [_captureDevice unlockForConfiguration];
              NSLog(@"formats  %@ %@ %@",vFormat.mediaType,vFormat.formatDescription,vFormat.videoSupportedFrameRateRanges);
+             break;
           }
        }
   }
