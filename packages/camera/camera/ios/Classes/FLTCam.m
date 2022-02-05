@@ -126,7 +126,7 @@ NSString *const errorMethod = @"error";
       CMFormatDescriptionRef description= vFormat.formatDescription;
       float maxrate=((AVFrameRateRange*)[vFormat.videoSupportedFrameRateRanges objectAtIndex:0]).maxFrameRate;
 
-      if(maxrate>29 && CMFormatDescriptionGetMediaSubType(description)==kCVPixelFormatType_32BGRA)
+      if(maxrate>29)
       {
           NSLog(@"loop 2 yolobert");
           if ( YES == [_captureDevice lockForConfiguration:NULL] )
