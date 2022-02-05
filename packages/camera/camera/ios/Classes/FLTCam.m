@@ -119,30 +119,6 @@ NSString *const errorMethod = @"error";
     *error = localError;
     return nil;
   }
-  NSLog(@"my test print yolobert");
-  for(AVCaptureDeviceFormat *vFormat in [_captureDevice formats] )
-  {
-      NSLog(@"loop 1 yolobert");
-      CMFormatDescriptionRef description= vFormat.formatDescription;
-      float maxrate=((AVFrameRateRange*)[vFormat.videoSupportedFrameRateRanges objectAtIndex:0]).maxFrameRate;
-
-      if(maxrate>29)
-      {
-          NSLog(@"loop 2 yolobert");
-          if ( YES == [_captureDevice lockForConfiguration:NULL] )
-          {
-             NSLog(@"loop 3 yolobert");
-             _captureDevice.activeFormat = vFormat;
-             [_captureDevice setActiveVideoMinFrameDuration:CMTimeMake(10,300)];
-             [_captureDevice setActiveVideoMaxFrameDuration:CMTimeMake(10,300)];
-             [_captureDevice unlockForConfiguration];
-             NSLog(@"formats  %@ %@ %@",vFormat.mediaType,vFormat.formatDescription,vFormat.videoSupportedFrameRateRanges);
-          }
-       }
-  }
-  NSLog(@"after loop yolobert");
-
-
 
   _captureVideoOutput = [AVCaptureVideoDataOutput new];
   _captureVideoOutput.videoSettings =
@@ -159,6 +135,30 @@ NSString *const errorMethod = @"error";
   }
 
   [_captureSession addInputWithNoConnections:_captureVideoInput];
+
+    NSLog(@"my test print yolobert 2");
+    for(AVCaptureDeviceFormat *vFormat in [_captureDevice formats] )
+    {
+        NSLog(@"loop 1 yolobert");
+        CMFormatDescriptionRef description= vFormat.formatDescription;
+        float maxrate=((AVFrameRateRange*)[vFormat.videoSupportedFrameRateRanges objectAtIndex:0]).maxFrameRate;
+
+        if(maxrate>29)
+        {
+            NSLog(@"loop 2 yolobert");
+            if ( YES == [_captureDevice lockForConfiguration:NULL] )
+            {
+               NSLog(@"loop 3 yolobert");
+               _captureDevice.activeFormat = vFormat;
+               [_captureDevice setActiveVideoMinFrameDuration:CMTimeMake(10,300)];
+               [_captureDevice setActiveVideoMaxFrameDuration:CMTimeMake(10,300)];
+               [_captureDevice unlockForConfiguration];
+               NSLog(@"formats  %@ %@ %@",vFormat.mediaType,vFormat.formatDescription,vFormat.videoSupportedFrameRateRanges);
+            }
+         }
+    }
+    NSLog(@"after loop yolobert");
+
   [_captureSession addOutputWithNoConnections:_captureVideoOutput];
   [_captureSession addConnection:connection];
 
