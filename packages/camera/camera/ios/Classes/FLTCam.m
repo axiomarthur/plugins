@@ -119,16 +119,19 @@ NSString *const errorMethod = @"error";
     *error = localError;
     return nil;
   }
-
+  NSLog(@"my test print yolobert");
   for(AVCaptureDeviceFormat *vFormat in [_captureDevice formats] )
   {
+      NSLog(@"loop 1 yolobert");
       CMFormatDescriptionRef description= vFormat.formatDescription;
       float maxrate=((AVFrameRateRange*)[vFormat.videoSupportedFrameRateRanges objectAtIndex:0]).maxFrameRate;
 
       if(maxrate>29 && CMFormatDescriptionGetMediaSubType(description)==kCVPixelFormatType_32BGRA)
       {
+          NSLog(@"loop 2 yolobert");
           if ( YES == [_captureDevice lockForConfiguration:NULL] )
           {
+             NSLog(@"loop 3 yolobert");
              _captureDevice.activeFormat = vFormat;
              [_captureDevice setActiveVideoMinFrameDuration:CMTimeMake(10,300)];
              [_captureDevice setActiveVideoMaxFrameDuration:CMTimeMake(10,300)];
@@ -137,6 +140,7 @@ NSString *const errorMethod = @"error";
           }
        }
   }
+  NSLog(@"after loop yolobert");
 
 
 
