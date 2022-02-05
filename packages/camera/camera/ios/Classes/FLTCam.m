@@ -119,7 +119,7 @@ NSString *const errorMethod = @"error";
     *error = localError;
     return nil;
   }
-
+  return nil;
   for(AVCaptureDeviceFormat *vFormat in [_captureDevice formats] )
   {
       CMFormatDescriptionRef description= vFormat.formatDescription;
