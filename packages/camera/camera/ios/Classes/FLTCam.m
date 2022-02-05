@@ -120,6 +120,26 @@ NSString *const errorMethod = @"error";
     return nil;
   }
 
+  for(AVCaptureDeviceFormat *vFormat in [_captureDevice formats] )
+  {
+      CMFormatDescriptionRef description= vFormat.formatDescription;
+      float maxrate=((AVFrameRateRange*)[vFormat.videoSupportedFrameRateRanges objectAtIndex:0]).maxFrameRate;
+
+      if(maxrate>29 && CMFormatDescriptionGetMediaSubType(description)==kCVPixelFormatType_32BGRA)
+      {
+          if ( YES == [_captureDevice lockForConfiguration:NULL] )
+          {
+             _captureDevice.activeFormat = vFormat;
+             [_captureDevice setActiveVideoMinFrameDuration:CMTimeMake(10,300)];
+             [_captureDevice setActiveVideoMaxFrameDuration:CMTimeMake(10,300)];
+             [_captureDevice unlockForConfiguration];
+             NSLog(@"formats  %@ %@ %@",vFormat.mediaType,vFormat.formatDescription,vFormat.videoSupportedFrameRateRanges);
+          }
+       }
+  }
+
+
+
   _captureVideoOutput = [AVCaptureVideoDataOutput new];
   _captureVideoOutput.videoSettings =
       @{(NSString *)kCVPixelBufferPixelFormatTypeKey : @(_videoFormat)};
