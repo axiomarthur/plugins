@@ -427,7 +427,7 @@ NSString *const errorMethod = @"error";
       }
 
       CMSampleTimingInfo timingInfo = kCMTimingInfoInvalid;
-      CMSampleBufferGetSampleTimingInfo(sampleBuffer, 0, &timimgInfo);
+      CMSampleBufferGetSampleTimingInfo(sampleBuffer, 0, &timingInfo);
 
       //NSLog(@"%@", timingInfo.presentationTimeStamp.value);
 
