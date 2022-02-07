@@ -429,7 +429,7 @@ NSString *const errorMethod = @"error";
       CMSampleTimingInfo timimgInfo = kCMTimingInfoInvalid;
       CMSampleBufferGetSampleTimingInfo(sampleBuffer, 0, &timimgInfo);
 
-      int myTime = timingInfo.presentationTimeStamp.value;
+      int64_t myTime = timingInfo.presentationTimeStamp.value;
 
       // Before accessing pixel data, we should lock the base address, and unlock it afterwards.
       // Done accessing the `pixelBuffer` at this point.
