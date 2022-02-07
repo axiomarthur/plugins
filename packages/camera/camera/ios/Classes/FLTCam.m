@@ -388,7 +388,7 @@ NSString *const errorMethod = @"error";
 
       NSMutableArray *planes = [NSMutableArray array];
 
-      const Boolean isPlanar = true;
+      const Boolean isPlanar = CVPixelBufferIsPlanar(pixelBuffer);
       size_t planeCount;
       if (isPlanar) {
         planeCount = CVPixelBufferGetPlaneCount(pixelBuffer);
