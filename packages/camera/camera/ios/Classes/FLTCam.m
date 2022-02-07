@@ -426,12 +426,12 @@ NSString *const errorMethod = @"error";
         [planes addObject:planeBuffer];
       }
 
-      CMSampleTimingInfo timimgInfo = kCMTimingInfoInvalid;
+      CMSampleTimingInfo timingInfo = kCMTimingInfoInvalid;
       CMSampleBufferGetSampleTimingInfo(sampleBuffer, 0, &timimgInfo);
 
-      NSLog(@"%@", timingInfo.presentationTimeStamp.value);
+      //NSLog(@"%@", timingInfo.presentationTimeStamp.value);
 
-      //int64_t myTime = timingInfo.presentationTimeStamp.value;
+      int64_t myTime = timingInfo.presentationTimeStamp.value;
 
       // Before accessing pixel data, we should lock the base address, and unlock it afterwards.
       // Done accessing the `pixelBuffer` at this point.
