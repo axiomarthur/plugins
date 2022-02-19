@@ -431,7 +431,11 @@ NSString *const errorMethod = @"error";
 
       //NSLog(@"%@", timingInfo.presentationTimeStamp.value);
 
-      int64_t myTime = timingInfo.presentationTimeStamp.value / 1000000;
+      //int64_t myTime = timingInfo.presentationTimeStamp.value / 1000000;
+
+      CMClockRef originalClock = CMClockGetHostTimeClock();
+      CMTime syncedPTS = timingInfo.presentationTimeStamp;
+      int64_t originalPTS = CMSyncConvertTime( syncedPTS, [session masterClock], originalClock).value / 1000000;
 
       // Before accessing pixel data, we should lock the base address, and unlock it afterwards.
       // Done accessing the `pixelBuffer` at this point.
