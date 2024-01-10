@@ -435,7 +435,7 @@ NSString *const errorMethod = @"error";
 
       CMClockRef originalClock = CMClockGetHostTimeClock();
       CMTime syncedPTS = timingInfo.presentationTimeStamp;
-      int64_t myTime = CMSyncConvertTime( syncedPTS, [_captureSession masterClock], originalClock).value / 1000000;
+      int64_t myTime = CMSyncConvertTime( syncedPTS, [_captureSession masterClock], originalClock).value;
 
 
       // Before accessing pixel data, we should lock the base address, and unlock it afterwards.
