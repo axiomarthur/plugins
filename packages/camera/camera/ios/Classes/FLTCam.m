@@ -450,7 +450,8 @@ NSString *const errorMethod = @"error";
       imageBuffer[@"lensAperture"] = [NSNumber numberWithFloat:[_captureDevice lensAperture]];
       Float64 exposureDuration = CMTimeGetSeconds([_captureDevice exposureDuration]);
       Float64 nsExposureDuration = 1000000000 * exposureDuration;
-      imageBuffer[@"sensorExposureTime"] = [NSNumber numberWithInt:myTime];
+      imageBuffer[@"sensorExposureTime"] = [NSNumber numberWithInt:nsExposureDuration];
+      imageBuffer[@"timeStampNanos"] = [NSNumber numberWithLongLong:myTime];
       imageBuffer[@"sensorSensitivity"] = [NSNumber numberWithFloat:[_captureDevice ISO]];
 
       dispatch_async(dispatch_get_main_queue(), ^{

@@ -102,6 +102,7 @@ class CameraImage {
         width = data['width'],
         lensAperture = data['lensAperture'],
         sensorExposureTime = data['sensorExposureTime'],
+        timeStampNanos = data['timeStampNanos'],
         sensorSensitivity = data['sensorSensitivity'],
         planes = List<Plane>.unmodifiable(data['planes']
             .map((dynamic planeData) => Plane._fromPlatformData(planeData)));
@@ -139,4 +140,7 @@ class CameraImage {
 
   /// The sensor sensitivity in standard ISO arithmetic units.
   final double? sensorSensitivity;
+
+  /// Hier kommt der custom timestamp. Nice!
+  final int? timeStampNanos;
 }
