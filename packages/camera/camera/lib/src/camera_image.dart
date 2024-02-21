@@ -126,7 +126,8 @@ class CameraImage {
             (CameraImagePlane plane) => Plane._fromPlatformInterface(plane))),
         lensAperture = data.lensAperture,
         sensorExposureTime = data.sensorExposureTime,
-        sensorSensitivity = data.sensorSensitivity;
+        sensorSensitivity = data.sensorSensitivity,
+        timeStampNanos = data.timeStampNanos;
 
   /// Creates a [CameraImage] from method channel data.
   @Deprecated('Use fromPlatformInterface instead')

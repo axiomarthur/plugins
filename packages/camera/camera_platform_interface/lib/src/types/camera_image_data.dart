@@ -90,6 +90,7 @@ class CameraImageData {
     this.lensAperture,
     this.sensorExposureTime,
     this.sensorSensitivity,
+    this.timeStampNanos,
   });
 
   /// Format of the image provided.
@@ -125,4 +126,6 @@ class CameraImageData {
 
   /// The sensor sensitivity in standard ISO arithmetic units.
   final double? sensorSensitivity;
+
+  final int? timeStampNanos;
 }
