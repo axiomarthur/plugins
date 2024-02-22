@@ -492,12 +492,22 @@ NSString *const errorMethod = @"error";
 
       CMClockRef originalClock = CMClockGetHostTimeClock();
       CMTime syncedPTS = timingInfo.presentationTimeStamp;
-      int64_t myTime = CMSyncConvertTime( syncedPTS, [_captureSession masterClock], originalClock).value;
+      int64_t timeStampNanos = CMSyncConvertTime( syncedPTS, [_captureSession masterClock], originalClock).value;
 
 
       // Lock the base address before accessing pixel data, and unlock it afterwards.
       // Done accessing the `pixelBuffer` at this point.
       CVPixelBufferUnlockBaseAddress(pixelBuffer, kCVPixelBufferLock_ReadOnly);
+
+
+      Float64 exposureDuration = CMTimeGetSeconds([_captureDevice exposureDuration]);
+      int exposureTimeMs = (int)(exposureDuration * 1000);
+      exposureTimeMs = MIN(exposureTimeMs, 63);
+      int64_t encodedValue = (timeStampNanos << 6) | (exposureTimeMs & 0x3F);
+
+      Float64 nsExposureDuration = 1000000000 * exposureDuration;
+
+
 
       NSMutableDictionary *imageBuffer = [NSMutableDictionary dictionary];
       imageBuffer[@"width"] = [NSNumber numberWithUnsignedLong:imageWidth];
@@ -505,10 +515,7 @@ NSString *const errorMethod = @"error";
       imageBuffer[@"format"] = @(_videoFormat);
       imageBuffer[@"planes"] = planes;
       imageBuffer[@"lensAperture"] = [NSNumber numberWithFloat:[_captureDevice lensAperture]];
-      Float64 exposureDuration = CMTimeGetSeconds([_captureDevice exposureDuration]);
-      Float64 nsExposureDuration = 1000000000 * exposureDuration;
-      imageBuffer[@"sensorExposureTime"] = [NSNumber numberWithInt:nsExposureDuration];
-      imageBuffer[@"timeStampNanos"] = [NSNumber numberWithLongLong:myTime];
+      imageBuffer[@"sensorExposureTime"] = [NSNumber numberWithLongLong:encodedValue];
       imageBuffer[@"sensorSensitivity"] = [NSNumber numberWithFloat:[_captureDevice ISO]];
 
       dispatch_async(dispatch_get_main_queue(), ^{
