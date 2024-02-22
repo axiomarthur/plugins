@@ -1177,6 +1177,7 @@ class Camera
           imageBuffer.put("planes", planes);
           imageBuffer.put("lensAperture", this.captureProps.getLastLensAperture());
           imageBuffer.put("sensorExposureTime", this.captureProps.getLastSensorExposureTime());
+          imageBuffer.put("timeStampNanos", img.getTimestamp());
           Integer sensorSensitivity = this.captureProps.getLastSensorSensitivity();
           imageBuffer.put(
               "sensorSensitivity", sensorSensitivity == null ? null : (double) sensorSensitivity);

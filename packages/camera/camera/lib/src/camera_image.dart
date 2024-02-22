@@ -127,7 +127,7 @@ class CameraImage {
         lensAperture = data.lensAperture,
         sensorExposureTime = data.sensorExposureTime,
         sensorSensitivity = data.sensorSensitivity,
-        timeStampNanos = null;
+        timeStampNanos = data.timeStampNanos;
 
   /// Creates a [CameraImage] from method channel data.
   @Deprecated('Use fromPlatformInterface instead')
