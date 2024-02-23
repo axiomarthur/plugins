@@ -1227,7 +1227,7 @@ class Camera
   }
 
   public byte[] setRGBIntFromPlanes(Image image) {
-    byte[] rgbValues = new byte[this.width * this.height * 3];
+    byte[] rgbValues = new byte[this.width * this.height * 4];
 
     int rotation = Surface.ROTATION_0;
 
@@ -1287,19 +1287,19 @@ class Camera
           } else {
             switch (rotation) {
               case Surface.ROTATION_0:
-                rgbValues[(y * originalWidth + x) * 3] = (byte) (r >> 6 & 0xff);
-                rgbValues[(y * originalWidth + x) * 3 + 1] = (byte) (g >> 2 & 0xff);
-                rgbValues[(y * originalWidth + x) * 3 + 2] = (byte) (b >> 10 & 0xff);
+                rgbValues[(y * originalWidth + x) * 4] = (byte) (r >> 6 & 0xff);
+                rgbValues[(y * originalWidth + x) * 4 + 1] = (byte) (g >> 2 & 0xff);
+                rgbValues[(y * originalWidth + x) * 4 + 2] = (byte) (b >> 10 & 0xff);
                 break;
               case Surface.ROTATION_90:
-                rgbValues[((originalWidth - x - 1) * originalHeight + y) * 3] = (byte) (r >> 6 & 0xff);
-                rgbValues[((originalWidth - x - 1) * originalHeight + y) * 3 + 1] = (byte) (g >> 2 & 0xff);
-                rgbValues[((originalWidth - x - 1) * originalHeight + y) * 3 + 2] = (byte) (b >> 10 & 0xff);
+                rgbValues[((originalWidth - x - 1) * originalHeight + y) * 4] = (byte) (r >> 6 & 0xff);
+                rgbValues[((originalWidth - x - 1) * originalHeight + y) * 4 + 1] = (byte) (g >> 2 & 0xff);
+                rgbValues[((originalWidth - x - 1) * originalHeight + y) * 4 + 2] = (byte) (b >> 10 & 0xff);
                 break;
               case Surface.ROTATION_270:
-                rgbValues[(x * originalHeight + y) * 3] = (byte) (r >> 6 & 0xff);
-                rgbValues[(x * originalHeight + y) * 3 + 1] = (byte) (g >> 2 & 0xff);
-                rgbValues[(x * originalHeight + y) * 3 + 2] = (byte) (b >> 10 & 0xff);
+                rgbValues[(x * originalHeight + y) * 4] = (byte) (r >> 6 & 0xff);
+                rgbValues[(x * originalHeight + y) * 4 + 1] = (byte) (g >> 2 & 0xff);
+                rgbValues[(x * originalHeight + y) * 4 + 2] = (byte) (b >> 10 & 0xff);
                 break;
             }
           }
@@ -1323,19 +1323,22 @@ class Camera
                     (bValues[y / dSmpl * originalWidth / dSmpl + x / dSmpl] / dSmpl / dSmpl);
             switch (rotation) {
               case Surface.ROTATION_0:
-                rgbValues[(y / dSmpl * originalWidth / dSmpl + x / dSmpl) * 3] = (byte) ((rgb >> 16) & 0xFF);
-                rgbValues[(y / dSmpl * originalWidth / dSmpl + x / dSmpl) * 3 + 1] = (byte) ((rgb >> 8) & 0xFF);
-                rgbValues[(y / dSmpl * originalWidth / dSmpl + x / dSmpl) * 3 + 2] = (byte) (rgb & 0xFF);
+                rgbValues[(y / dSmpl * originalWidth / dSmpl + x / dSmpl) * 4] = (byte) ((rgb >> 16) & 0xFF);
+                rgbValues[(y / dSmpl * originalWidth / dSmpl + x / dSmpl) * 4 + 1] = (byte) ((rgb >> 8) & 0xFF);
+                rgbValues[(y / dSmpl * originalWidth / dSmpl + x / dSmpl) * 4 + 2] = (byte) (rgb & 0xFF);
+                rgbValues[(y / dSmpl * originalWidth / dSmpl + x / dSmpl) * 4 + 3] = (byte) 0xFF;
                 break;
               case Surface.ROTATION_90:
-                rgbValues[((originalWidth - x - 1) / dSmpl * originalHeight / dSmpl + y / dSmpl) * 3] = (byte) ((rgb >> 16) & 0xFF);
-                rgbValues[((originalWidth - x - 1) / dSmpl * originalHeight / dSmpl + y / dSmpl) * 3 + 1] = (byte) ((rgb >> 8) & 0xFF);
-                rgbValues[((originalWidth - x - 1) / dSmpl * originalHeight / dSmpl + y / dSmpl) * 3 + 2] = (byte) (rgb & 0xFF);
+                rgbValues[((originalWidth - x - 1) / dSmpl * originalHeight / dSmpl + y / dSmpl) * 4] = (byte) ((rgb >> 16) & 0xFF);
+                rgbValues[((originalWidth - x - 1) / dSmpl * originalHeight / dSmpl + y / dSmpl) * 4 + 1] = (byte) ((rgb >> 8) & 0xFF);
+                rgbValues[((originalWidth - x - 1) / dSmpl * originalHeight / dSmpl + y / dSmpl) * 4 + 2] = (byte) (rgb & 0xFF);
+                rgbValues[((originalWidth - x - 1) / dSmpl * originalHeight / dSmpl + y / dSmpl) * 4 + 3] = (byte) 0xFF;
                 break;
               case Surface.ROTATION_270:
-                rgbValues[(x / dSmpl * originalHeight / dSmpl + y / dSmpl) * 3] = (byte) ((rgb >> 16) & 0xFF);
-                rgbValues[(x / dSmpl * originalHeight / dSmpl + y / dSmpl) * 3 + 1] = (byte) ((rgb >> 8) & 0xFF);
-                rgbValues[(x / dSmpl * originalHeight / dSmpl + y / dSmpl) * 3 + 2] = (byte) (rgb & 0xFF);
+                rgbValues[(x / dSmpl * originalHeight / dSmpl + y / dSmpl) * 4] = (byte) ((rgb >> 16) & 0xFF);
+                rgbValues[(x / dSmpl * originalHeight / dSmpl + y / dSmpl) * 4 + 1] = (byte) ((rgb >> 8) & 0xFF);
+                rgbValues[(x / dSmpl * originalHeight / dSmpl + y / dSmpl) * 4 + 2] = (byte) (rgb & 0xFF);
+                rgbValues[(x / dSmpl * originalHeight / dSmpl + y / dSmpl) * 4 + 2] = (byte) 0xFF;
                 break;
             }
           }
