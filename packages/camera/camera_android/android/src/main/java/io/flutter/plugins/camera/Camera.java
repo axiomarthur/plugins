@@ -115,6 +115,18 @@ class Camera
    * Holds all of the camera features/settings and will be used to update the request builder when
    * one changes.
    */
+
+  private boolean initVariables = true;
+  private int originalHeight;
+  private int originalWidth;
+  private final int dSmpl = 2;
+  private short[] rValues;
+  private short[] gValues;
+  private short[] bValues;
+  private int width;
+  private int height;
+
+
   private final CameraFeatures cameraFeatures;
 
   private final SurfaceTextureEntry flutterTexture;
@@ -1148,27 +1160,52 @@ class Camera
         });
   }
 
+  private void initVariables(Image image) {
+    if (initVariables) {
+      this.originalHeight = image.getWidth();
+      this.originalWidth = image.getHeight();
+      this.width = originalHeight / dSmpl;
+      this.height = originalWidth / dSmpl;
+      rValues = new short[this.width * this.height];
+      gValues = new short[this.width * this.height];
+      bValues = new short[this.width * this.height];
+      initVariables = false;
+    }
+  }
+
   private void setImageStreamImageAvailableListener(final EventChannel.EventSink imageStreamSink) {
+      initVariables = true;
+    Log.d("mycameratyp", "initVariables");
     imageStreamReader.setOnImageAvailableListener(
         reader -> {
           Image img = reader.acquireNextImage();
           // Use acquireNextImage since image reader is only for one image.
           if (img == null) return;
 
+          initVariables(img);
+
+          byte[] bytes = setRGBIntFromPlanes(img);
           List<Map<String, Object>> planes = new ArrayList<>();
-          for (Image.Plane plane : img.getPlanes()) {
-            ByteBuffer buffer = plane.getBuffer();
+          Map<String, Object> planeBuffer = new HashMap<>();
+          planeBuffer.put("bytesPerRow", 1);
+          planeBuffer.put("bytesPerPixel", 1);
+          planeBuffer.put("bytes", bytes);
+          planes.add(planeBuffer);
 
-            byte[] bytes = new byte[buffer.remaining()];
-            buffer.get(bytes, 0, bytes.length);
-
-            Map<String, Object> planeBuffer = new HashMap<>();
-            planeBuffer.put("bytesPerRow", plane.getRowStride());
-            planeBuffer.put("bytesPerPixel", plane.getPixelStride());
-            planeBuffer.put("bytes", bytes);
-
-            planes.add(planeBuffer);
-          }
+//          List<Map<String, Object>> planes = new ArrayList<>();
+//          for (Image.Plane plane : img.getPlanes()) {
+//            ByteBuffer buffer = plane.getBuffer();
+//
+//            byte[] bytes = new byte[buffer.remaining()];
+//            buffer.get(bytes, 0, bytes.length);
+//
+//            Map<String, Object> planeBuffer = new HashMap<>();
+//            planeBuffer.put("bytesPerRow", plane.getRowStride());
+//            planeBuffer.put("bytesPerPixel", plane.getPixelStride());
+//            planeBuffer.put("bytes", bytes);
+//
+//            planes.add(planeBuffer);
+//          }
 
           Map<String, Object> imageBuffer = new HashMap<>();
           imageBuffer.put("width", img.getWidth());
@@ -1187,6 +1224,125 @@ class Camera
           img.close();
         },
         backgroundHandler);
+  }
+
+  public byte[] setRGBIntFromPlanes(Image image) {
+    byte[] rgbValues = new byte[this.width * this.height * 3];
+
+    int rotation = Surface.ROTATION_0;
+
+    Image.Plane[] planes = image.getPlanes();
+
+    Image.Plane yPlane = planes[0];
+    Image.Plane uPlane = planes[1];
+    Image.Plane vPlane = planes[2];
+
+    int bufferIndex = 0;
+    int total = yPlane.getBuffer().capacity();
+    int uvCapacity = uPlane.getBuffer().capacity();
+    int width = planes[0].getRowStride();
+    int yPos = 0;
+    for (int i = 0; i < originalWidth; i++) {
+      int uvPos = (i >> 1) * planes[1].getRowStride();
+
+      for (int j = 0; j < width; j++) {
+        if (uvPos >= uvCapacity)
+          break;
+        if (yPos >= total)
+          break;
+
+        int y1 = yPlane.getBuffer().get(yPos++) & 0xff;
+
+        int u = (uPlane.getBuffer().get(uvPos) & 0xff) - 128;
+        int v = (vPlane.getBuffer().get(uvPos) & 0xff) - 128;
+        if ((j & 1) == 1) {
+          uvPos += planes[1].getPixelStride();
+        }
+
+        int x = bufferIndex % width;
+        int y = bufferIndex / width;
+        bufferIndex++;
+        int xTmp = x;
+        x = originalWidth - 1 - y;
+        y = xTmp;
+
+        if (y >= originalHeight || x >= originalWidth) {
+          continue;
+        }
+
+        if (x % dSmpl == (dSmpl - 1) && y % dSmpl == 0) {
+          int y1192 = 1192 * y1;
+          int r = y1192 + 1634 * v;
+          int g = y1192 - 833 * v - 400 * u;
+          int b = y1192 + 2066 * u;
+
+          r = (r < 0) ? 0 : (r > 262143) ? 262143 : r;
+          g = (g < 0) ? 0 : (g > 262143) ? 262143 : g;
+          b = (b < 0) ? 0 : (b > 262143) ? 262143 : b;
+
+          if (dSmpl != 1) {
+            rValues[y / dSmpl * originalWidth / dSmpl + x / dSmpl] = (short) (r >> 10 & 0xff);
+            gValues[y / dSmpl * originalWidth / dSmpl + x / dSmpl] = (short) (g >> 10 & 0xff);
+            bValues[y / dSmpl * originalWidth / dSmpl + x / dSmpl] = (short) (b >> 10 & 0xff);
+          } else {
+            switch (rotation) {
+              case Surface.ROTATION_0:
+                rgbValues[(y * originalWidth + x) * 3] = (byte) (r >> 6 & 0xff);
+                rgbValues[(y * originalWidth + x) * 3 + 1] = (byte) (g >> 2 & 0xff);
+                rgbValues[(y * originalWidth + x) * 3 + 2] = (byte) (b >> 10 & 0xff);
+                break;
+              case Surface.ROTATION_90:
+                rgbValues[((originalWidth - x - 1) * originalHeight + y) * 3] = (byte) (r >> 6 & 0xff);
+                rgbValues[((originalWidth - x - 1) * originalHeight + y) * 3 + 1] = (byte) (g >> 2 & 0xff);
+                rgbValues[((originalWidth - x - 1) * originalHeight + y) * 3 + 2] = (byte) (b >> 10 & 0xff);
+                break;
+              case Surface.ROTATION_270:
+                rgbValues[(x * originalHeight + y) * 3] = (byte) (r >> 6 & 0xff);
+                rgbValues[(x * originalHeight + y) * 3 + 1] = (byte) (g >> 2 & 0xff);
+                rgbValues[(x * originalHeight + y) * 3 + 2] = (byte) (b >> 10 & 0xff);
+                break;
+            }
+          }
+        } else {
+          int y1192 = 1192 * y1;
+          int r = y1192 + 1634 * v;
+          int g = y1192 - 833 * v - 400 * u;
+          int b = y1192 + 2066 * u;
+
+          r = (r < 0) ? 0 : (r > 262143) ? 262143 : r;
+          g = (g < 0) ? 0 : (g > 262143) ? 262143 : g;
+          b = (b < 0) ? 0 : (b > 262143) ? 262143 : b;
+
+          rValues[y / dSmpl * originalWidth / dSmpl + x / dSmpl] += (r >> 10 & 0xff);
+          gValues[y / dSmpl * originalWidth / dSmpl + x / dSmpl] += (g >> 10 & 0xff);
+          bValues[y / dSmpl * originalWidth / dSmpl + x / dSmpl] += (b >> 10 & 0xff);
+
+          if (x % dSmpl == 0 && y % dSmpl == (dSmpl - 1)) {
+            int rgb = ((rValues[y / dSmpl * originalWidth / dSmpl + x / dSmpl] / dSmpl / dSmpl) << 16) |
+                    ((gValues[y / dSmpl * originalWidth / dSmpl + x / dSmpl] / dSmpl / dSmpl) << 8) |
+                    (bValues[y / dSmpl * originalWidth / dSmpl + x / dSmpl] / dSmpl / dSmpl);
+            switch (rotation) {
+              case Surface.ROTATION_0:
+                rgbValues[(y / dSmpl * originalWidth / dSmpl + x / dSmpl) * 3] = (byte) ((rgb >> 16) & 0xFF);
+                rgbValues[(y / dSmpl * originalWidth / dSmpl + x / dSmpl) * 3 + 1] = (byte) ((rgb >> 8) & 0xFF);
+                rgbValues[(y / dSmpl * originalWidth / dSmpl + x / dSmpl) * 3 + 2] = (byte) (rgb & 0xFF);
+                break;
+              case Surface.ROTATION_90:
+                rgbValues[((originalWidth - x - 1) / dSmpl * originalHeight / dSmpl + y / dSmpl) * 3] = (byte) ((rgb >> 16) & 0xFF);
+                rgbValues[((originalWidth - x - 1) / dSmpl * originalHeight / dSmpl + y / dSmpl) * 3 + 1] = (byte) ((rgb >> 8) & 0xFF);
+                rgbValues[((originalWidth - x - 1) / dSmpl * originalHeight / dSmpl + y / dSmpl) * 3 + 2] = (byte) (rgb & 0xFF);
+                break;
+              case Surface.ROTATION_270:
+                rgbValues[(x / dSmpl * originalHeight / dSmpl + y / dSmpl) * 3] = (byte) ((rgb >> 16) & 0xFF);
+                rgbValues[(x / dSmpl * originalHeight / dSmpl + y / dSmpl) * 3 + 1] = (byte) ((rgb >> 8) & 0xFF);
+                rgbValues[(x / dSmpl * originalHeight / dSmpl + y / dSmpl) * 3 + 2] = (byte) (rgb & 0xFF);
+                break;
+            }
+          }
+        }
+      }
+    }
+    return rgbValues;
   }
 
   private void closeCaptureSession() {
