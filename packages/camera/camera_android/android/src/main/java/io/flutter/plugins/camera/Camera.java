@@ -1188,7 +1188,7 @@ class Camera
           List<Map<String, Object>> planes = new ArrayList<>();
           Map<String, Object> planeBuffer = new HashMap<>();
           planeBuffer.put("bytesPerRow", 1);
-          planeBuffer.put("bytesPerPixel", 1);
+          planeBuffer.put("bytesPerPixel", 2);
           planeBuffer.put("bytes", bytes);
           planes.add(planeBuffer);
 
