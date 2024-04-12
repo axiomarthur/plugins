@@ -137,7 +137,7 @@ class CameraImage {
         width = data['width'] as int,
         lensAperture = data['lensAperture'] as double?,
         sensorExposureTime = data['sensorExposureTime'] as int?,
-        timeStampNanos = data['timeStampNanos'],
+        timeStampNanos = data['timeStampNanos'] as int,
         sensorSensitivity = data['sensorSensitivity'] as double?,
         planes = List<Plane>.unmodifiable((data['planes'] as List<dynamic>)
             .map<Plane>((dynamic planeData) =>
@@ -178,5 +178,5 @@ class CameraImage {
   final double? sensorSensitivity;
 
   /// Hier kommt der custom timestamp. Nice!
-  final int? timeStampNanos;
+  final int timeStampNanos;
 }

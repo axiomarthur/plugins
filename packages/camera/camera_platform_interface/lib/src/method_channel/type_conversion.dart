@@ -24,7 +24,7 @@ CameraImageData cameraImageFromPlatformData(Map<dynamic, dynamic> data) {
           (data['planes'] as List<dynamic>).map<CameraImagePlane>(
               (dynamic planeData) => _cameraImagePlaneFromPlatformData(
                   planeData as Map<dynamic, dynamic>))),
-      timeStampNanos: data['timeStampNanos'] as int?);
+      timeStampNanos: data['timeStampNanos'] as int);
 }
 
 CameraImageFormat _cameraImageFormatFromPlatformData(dynamic data) {

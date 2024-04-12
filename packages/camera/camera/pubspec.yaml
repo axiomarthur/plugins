@@ -20,13 +20,9 @@ flutter:
       web:
         default_package: camera_web
 
-dependencies:
-  flutter:
-    sdk: flutter
-  flutter_plugin_android_lifecycle: ^2.0.2
-  quiver: ^3.0.0
+publish_to: none
 
-dependency_overrides:
+dependencies:
   camera_android:
     path: ../camera_android
   camera_avfoundation:
@@ -35,6 +31,11 @@ dependency_overrides:
     path: ../camera_platform_interface
   camera_web:
     path: ../camera_web
+  flutter:
+    sdk: flutter
+  flutter_plugin_android_lifecycle: ^2.0.2
+  quiver: ^3.0.0
+
 
 dev_dependencies:
   flutter_driver:

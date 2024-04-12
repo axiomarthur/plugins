@@ -18,7 +18,8 @@ flutter:
         dartPluginClass: AndroidCameraCameraX
 
 dependencies:
-  camera_platform_interface: ^2.2.0
+  camera_platform_interface:
+    path: ../camera_platform_interface
   flutter:
     sdk: flutter
   integration_test:
@@ -30,5 +31,4 @@ dev_dependencies:
   build_runner: ^2.1.4
   flutter_test:
     sdk: flutter
-  mockito: ^5.3.2
   pigeon: ^3.2.6
