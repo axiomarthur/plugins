@@ -127,7 +127,7 @@ class CameraImage {
         lensAperture = data.lensAperture,
         sensorExposureTime = data.sensorExposureTime,
         sensorSensitivity = data.sensorSensitivity,
-        timeStampNanos = 3;
+        timeStampNanos = data.timeStampNanos;
 
   /// Creates a [CameraImage] from method channel data.
   @Deprecated('Use fromPlatformInterface instead')
@@ -137,7 +137,7 @@ class CameraImage {
         width = data['width'] as int,
         lensAperture = data['lensAperture'] as double?,
         sensorExposureTime = data['sensorExposureTime'] as int?,
-        timeStampNanos = 2,
+        timeStampNanos = data['timeStampNanos'],
         sensorSensitivity = data['sensorSensitivity'] as double?,
         planes = List<Plane>.unmodifiable((data['planes'] as List<dynamic>)
             .map<Plane>((dynamic planeData) =>
